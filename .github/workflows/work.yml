@@ -1,27 +1,56 @@
-name: Commit date to master
-on: push
+# Building my own actions workflow
+# To check the python installation
+
+on:
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
+  workflow_dispatch:
+  
 jobs:
-  date:
+  build_wheel:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the branch
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: save current date
+      - uses: actions/checkout@v3
+        #with:
+         # persist-credentials: false
+          #fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+          
+      - name: Build wheel and install
         run: |
-          # do some operation that changes a file in the git repo
-          date > time.txt
-
-      - name: setup git config
+          #python -m pip install --user --upgrade build
+          python -m pip install jupyter
+          python -m pip install regex
+          #python -m pip install os-sys
+          
+          #python -m pip install pandas
+          #python -m pip install numpy
+          #python -m  pip install matplotlib
+          
+          
+          #python -m build
+          #find ./dist/*.whl | xargs pip install
+          
+      - name: create python file
         run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          jupyter nbconvert README.ipynb --to python
+          
+      - name: run requirements
+          python create_requirements.py
+          python -m pip install -r requirements.txt
+          jupyter nbconvert --execute --to markdown README.ipynb
+          
+
+      - name: Configure Git
+        run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-
-      - name: commit
-        run: |
-          # Stage the file, commit and push
-          git add time.txt
-          git commit -m "new date commit"
+          git add .
+          git commit -m 'pushing new wheel'
           git push origin main
+          #git push
