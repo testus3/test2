@@ -26,4 +26,4 @@ jobs:
           ls /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}
           if [[ $(ls .) = *.txt ]]; then
             echo "woho"
-          if
+          fi
